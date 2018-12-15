@@ -1,0 +1,86 @@
+﻿<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Conversión a formato binary32</title>
+	</head>
+	<body>
+		<p>Introduce el número que deseas convertir:</p>
+		<input id="numero">
+		<button type="button" onclick="convertir()">binary32</button>
+		<p id="conversion"></p>
+		<script>
+			function convertir() {
+				var numero=document.getElementById("numero").value;;
+				
+				//obtenemos el signo del número
+				var signo;
+				if(numero>0){
+					signo=1;
+				}else{
+					signo=0;
+					numero=Math.abs(numero);
+				}
+				
+				//hallamos exponente, mantisa y suma de exponente + sesgo
+				var numero_e;
+				var mantisa;
+				var numero_sesgo;
+
+				numero_e=Math.floor(Math.log(numero)/Math.log(2));
+				mantisa=numero/(Math.pow(2,numero_e));
+				numero_sesgo=127+numero_e;
+				
+				//convertimos a binario el numero_sesgo
+				var resto;
+				var binario_sesgo="";
+
+				while(numero_sesgo>=2){
+					resto=numero_sesgo%2;
+					numero_sesgo=parseInt(numero_sesgo/2);
+					binario_sesgo=String(binario_sesgo+resto);
+				}
+
+				//invertimos el orden de los dígitos de binario_sesgo
+				var longitud=binario_sesgo.length;
+				var cadena1=numero_sesgo; //es el último cociente
+				while(longitud>=0){
+					cadena1=cadena1+(binario_sesgo.charAt(longitud));
+					longitud--;
+				}
+				
+				//convertimos a binario la mantisa del número
+				
+				var resto_mantisa;
+				var binario_mantisa="";
+
+				mantisa=String(mantisa-1);
+				mantisa=mantisa.substring(2,mantisa.length);
+				mantisa=parseInt(mantisa);
+				
+				while(mantisa>=2){
+					resto_mantisa=mantisa%2;
+					mantisa=parseInt(mantisa/2);
+					binario_mantisa=String(binario_mantisa+resto_mantisa);
+				}
+				
+				
+				//invertimos el orden de los dígitos de binario_mantisa
+				var longitud_mantisa=binario_mantisa.length;
+				var cadena2=mantisa; //es el último cociente
+				while(longitud_mantisa>=0){
+					cadena2=cadena2+(binario_mantisa.charAt(longitud_mantisa));
+					longitud_mantisa--;
+				}
+				
+				var resultado="El número en formato binary32 es: " + signo + " - " + cadena1 + " - " + cadena2;
+				document.getElementById("conversion").innerHTML = resultado;
+				
+			}
+
+		</script>
+	</body>
+</html>
+
+
+
+
